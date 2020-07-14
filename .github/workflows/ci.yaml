@@ -49,6 +49,7 @@ jobs:
           conda config --show
       - name: Test with tox
         run: |
+          conda config --show
           TOXENV=$(echo $TOXENV | sed 's/\.//') tox
         env:
           TOXENV: py${{ matrix.python-version }}-${{ matrix.tox-action }}
