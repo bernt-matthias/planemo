@@ -64,8 +64,12 @@ def _serve(ctx, runnables, **kwds):
         config.install_workflows()
         if kwds.get("pid_file"):
             real_pid_file = config.pid_file
+            if not os.path.isdir(os.path.dirname(real_pid_file)):
+                raise Exception
             if not os.path.exists(real_pid_file):
                 raise Exception
+            if not os.path.isdir(os.path.dirname(real_pid_file)):
+                os.makedirs(os.path.dirname(real_pid_file))
             if os.path.exists(config.pid_file):
                 os.symlink(real_pid_file, kwds["pid_file"])
             else:
