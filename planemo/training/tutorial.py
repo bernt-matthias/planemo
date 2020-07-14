@@ -645,7 +645,7 @@ def format_wf_steps(wf, gi):
             paramlist += tool_inp.get_formatted_desc()
         # format the hands-on box
         body += templates.render(HANDS_ON_TOOL_BOX_TEMPLATE, **{
-            "tool_name": wf_step['name'],
+            "tool_name": wf_step,
             "paramlist": paramlist})
     return body
 
@@ -668,5 +668,6 @@ def get_hands_on_boxes_from_running_galaxy(wf_id, galaxy_url, galaxy_api_key):
     """Get the workflow dictionary from a running Galaxy instance with the workflow installed on it."""
     gi = galaxy.GalaxyInstance(galaxy_url, key=galaxy_api_key)
     wf = gi.workflows.export_workflow_dict(wf_id)
+    raise Exception("wf %s" % wf)
     tuto_body = format_wf_steps(wf, gi)
     return tuto_body
