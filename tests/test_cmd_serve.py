@@ -40,10 +40,6 @@ class ServeTestCase(CliTestCase):
         super(ServeTestCase, self).setUp()
         self._port = network_util.get_free_port()
         self._pid_file = os.path.join(self._home, "test.pid")
-        fh = open(self._pid_file, "w")
-        fh.close()
-        if not os.path.exists(self._pid_file):
-            raise Exception
         self._serve_artifact = os.path.join(TEST_REPOS_DIR, "single_tool", "cat.xml")
 
     @skip_if_environ("PLANEMO_SKIP_GALAXY_TESTS")
