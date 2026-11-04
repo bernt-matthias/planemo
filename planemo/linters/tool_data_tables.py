@@ -70,33 +70,22 @@ SAMPLE_SUFFIX = ".sample"
 REPOSITORY_MARKERS = (".shed.yml", ".shed.yaml", ".git", ".hg")
 EXCLUDED_DIRECTORIES = (".git", ".hg")
 
-MESSAGE_ERROR_CONF_SAMPLE_MISSING = (
-    "No {conf} was found in the repository but this tool uses data table [{name}]. "
-    "The Tool Shed will not set metadata for this revision - upload a {conf} that declares table "
-    "[{name}] together with the sample file of the data file it refers to (usually "
-    "{tool_data}/{name}.loc{suffix})."
-)
-MESSAGE_ERROR_CONF_SAMPLE_INVALID = (
-    "{conf} could not be parsed ({error}). The Tool Shed will not set metadata for this revision."
-)
+MESSAGE_ERROR_CONF_SAMPLE_MISSING = "No {conf} was found in the repository but this tool uses data table [{name}]."
+
+MESSAGE_ERROR_CONF_SAMPLE_INVALID = "{conf} could not be parsed ({error})."
+
 MESSAGE_ERROR_INDEX_SAMPLE_MISSING = (
-    "Data table [{name}] refers to {index_file} but the repository does not include {index_file}{suffix}. "
-    "The Tool Shed will not set metadata for this revision - upload a file named {index_file}{suffix} "
-    "(usually to {tool_data}/)."
+    "Data table [{name}] refers to {index_file} but the repository does not include {index_file}{suffix}."
 )
+
 MESSAGE_WARN_CONF_REFERS_TO_SAMPLE = (
-    "The data table [{name}] in {conf} names the sample file {index_file} instead of the data file it "
-    "samples. Galaxy installs repository tool data files with the {suffix} suffix stripped, so installing "
-    "this repository creates {data_file} while the entry keeps looking for {index_file} - the table only "
-    "has entries if a data manager or the administrator creates that file. Name the data file in the "
-    "entry, for example {tool_data}/{name}.loc."
+    "The data table [{name}] in {conf} names the sample file {index_file} instead of the data file it samples."
 )
+
 MESSAGE_WARN_FROM_FILE_SAMPLE_MISSING = (
-    "The tool reads {index_file} with from_file but the repository does not ship {index_file}{suffix}. "
-    "Galaxy resolves from_file paths in the tool data directory, so administrators need a file named "
-    "{index_file} there - ship {index_file}{suffix} (usually in {tool_data}/) as a template for them to "
-    "create it, or declare the file as a data table."
+    "The tool reads {index_file} with from_file but the repository does not ship {index_file}{suffix}."
 )
+
 
 # These linters only add messages for tools that actually reference data tables.
 lint_tool_types = ["*"]
@@ -276,12 +265,7 @@ class ToolDataTableConfSampleMissing(Linter):
                 continue
             reported.add(reference.name)
             lint_ctx.error(
-                MESSAGE_ERROR_CONF_SAMPLE_MISSING.format(
-                    name=reference.name,
-                    conf=DATA_TABLE_CONF_SAMPLE,
-                    tool_data=TOOL_DATA_DIRECTORY,
-                    suffix=SAMPLE_SUFFIX,
-                ),
+                MESSAGE_ERROR_CONF_SAMPLE_MISSING.format(name=reference.name, conf=DATA_TABLE_CONF_SAMPLE),
                 linter=cls.name(),
                 node=reference.node,
             )
@@ -317,10 +301,7 @@ class ToolDataTableIndexSampleMissing(Linter):
                 continue
             lint_ctx.error(
                 MESSAGE_ERROR_INDEX_SAMPLE_MISSING.format(
-                    name=reference.name,
-                    index_file=data_file.index_file,
-                    suffix=SAMPLE_SUFFIX,
-                    tool_data=TOOL_DATA_DIRECTORY,
+                    name=reference.name, index_file=data_file.index_file, suffix=SAMPLE_SUFFIX
                 ),
                 linter=cls.name(),
                 node=reference.node,
@@ -341,12 +322,7 @@ class ToolDataTableConfRefersToSample(Linter):
                 continue
             lint_ctx.warn(
                 MESSAGE_WARN_CONF_REFERS_TO_SAMPLE.format(
-                    name=reference.name,
-                    conf=conf,
-                    index_file=data_file.index_file,
-                    data_file=data_file.index_file[: -len(SAMPLE_SUFFIX)],
-                    suffix=SAMPLE_SUFFIX,
-                    tool_data=TOOL_DATA_DIRECTORY,
+                    name=reference.name, conf=conf, index_file=data_file.index_file
                 ),
                 linter=cls.name(),
                 node=reference.node,
@@ -368,9 +344,7 @@ class ToolDataTableFromFileSampleMissing(Linter):
                 continue
             reported.add(index_file)
             lint_ctx.warn(
-                MESSAGE_WARN_FROM_FILE_SAMPLE_MISSING.format(
-                    index_file=index_file, suffix=SAMPLE_SUFFIX, tool_data=TOOL_DATA_DIRECTORY
-                ),
+                MESSAGE_WARN_FROM_FILE_SAMPLE_MISSING.format(index_file=index_file, suffix=SAMPLE_SUFFIX),
                 linter=cls.name(),
                 node=reference.node,
             )

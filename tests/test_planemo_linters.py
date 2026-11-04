@@ -365,8 +365,10 @@ def test_data_table_linter_warns_about_config_naming_sample_file():
 
     [(level, linter, message)] = _lint_levels_linters_messages(lint_ctx)
     assert (level, linter) == ("warning", "ToolDataTableConfRefersToSample")
-    assert "names the sample file gene_ontology.loc.sample instead of the data file" in message
-    assert "installing this repository creates gene_ontology.loc" in message
+    assert message == (
+        "The data table [gene_ontology] in tool_data_table_conf.xml.sample names the sample file "
+        "gene_ontology.loc.sample instead of the data file it samples."
+    )
 
 
 def test_data_table_linter_warns_about_from_file_without_sample():
